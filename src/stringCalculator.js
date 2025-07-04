@@ -3,10 +3,21 @@ function add(numbers) {
   if (!numbers) {
     return 0;
   }
-  // If new lines exist, treat them as commas (delimiters), then split and sum
-  const normalized = numbers.replace(/\n/g, ",");
+
+  let delimiter = ",";
+  let nums = numbers;
+
+  // Check for custom delimiter at the start
+  if (numbers.startsWith("//")) {
+    const delimiterLineEnd = numbers.indexOf("\n");
+    delimiter = numbers.substring(2, delimiterLineEnd);
+    nums = numbers.substring(delimiterLineEnd + 1);
+  }
+
+  // Replace new lines with delimiter, then split and sum
+  const normalized = nums.replace(/\n/g, delimiter);
   return normalized
-    .split(",")
+    .split(delimiter)
     .map((str) => Number(str))
     .reduce((sum, num) => sum + num, 0);
 }
