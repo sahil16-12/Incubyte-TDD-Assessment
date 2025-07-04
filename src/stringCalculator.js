@@ -1,11 +1,11 @@
 function add(numbers) {
   // Return 0 for empty input
-  if (numbers === "") {
+  if (!numbers) {
     return 0;
   }
   // If new lines exist, treat them as commas (delimiters), then split and sum
-  return numbers
-    .replace(/\n/g, ",")
+  const normalized = numbers.replace(/\n/g, ",");
+  return normalized
     .split(",")
     .map((str) => Number(str))
     .reduce((sum, num) => sum + num, 0);
