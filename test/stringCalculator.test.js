@@ -60,5 +60,8 @@ describe("String Calculator", () => {
     expect(() => add("//;\n-5;6;-7")).toThrow(
       "negative numbers not allowed -5,-7"
     );
+    expect(() => add("//abc\n-33abc-90abc-9")).toThrow(
+      "negative numbers not allowed -33,-90,-9"
+    );
   });
 });

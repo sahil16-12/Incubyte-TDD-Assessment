@@ -22,12 +22,14 @@ function normalizeNumbers(numbers, delimiter) {
   return numbers;
 }
 
-// Helper to split and sum numbers
+// Helper to split and sum numbers, with negative check
 function sumNumbers(numbersStr, delimiter) {
-  return numbersStr
-    .split(delimiter)
-    .map((str) => Number(str))
-    .reduce((sum, num) => sum + num, 0);
+  const nums = numbersStr.split(delimiter).map((str) => Number(str));
+  const negatives = nums.filter((num) => num < 0);
+  if (negatives.length > 0) {
+    throw new Error(`negative numbers not allowed ${negatives.join(",")}`);
+  }
+  return nums.reduce((sum, num) => sum + num, 0);
 }
 
 function add(input) {
