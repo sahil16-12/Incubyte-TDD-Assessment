@@ -12,4 +12,9 @@ describe("String Calculator", () => {
   test("single number returns its value", () => {
     expect(add("1")).toBe(1);
   });
+
+  // Test case: when input is two numbers separated by a comma, add should return their sum
+  test("two numbers, comma delimited, returns their sum", () => {
+    expect(add("1,5")).toBe(6);
+  });
 });
