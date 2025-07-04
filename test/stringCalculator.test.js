@@ -19,4 +19,11 @@ describe("String Calculator", () => {
     expect(add("1,5")).toBe(6);
     expect(add("58,67")).toBe(125);
   });
+
+  // Test case: when input is multiple numbers separated by commas, add should return their sum
+  test("multiple numbers, comma delimited, returns their sum", () => {
+    expect(add("1,2,3")).toBe(6);
+    expect(add("10,20,30,40")).toBe(100);
+    expect(add("5,10,15,20,25")).toBe(75);
+  });
 });
