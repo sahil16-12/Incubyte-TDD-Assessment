@@ -39,6 +39,11 @@ describe("String Calculator", () => {
     expect(add("//;\n1;2")).toBe(3);
     expect(add("//|\n4|5|6")).toBe(15);
     expect(add("//-\n7-8-9")).toBe(24);
+    expect(add("//.\n1.2.3")).toBe(6);
+    expect(add("//1\n2112")).toBe(4); 
+    expect(add("// \n3 4 5")).toBe(12);
+    expect(add("//sep\n10sep20sep30")).toBe(60);
+    expect(add("//\n\n1\n2\n3")).toBe(6);
   });
 
   // step 4: Edge case for custom delimiter specified at the start
