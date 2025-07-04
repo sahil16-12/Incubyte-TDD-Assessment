@@ -33,4 +33,11 @@ describe("String Calculator", () => {
     expect(add("4\n5\n6")).toBe(15);
     expect(add("7,8\n9")).toBe(24);
   });
+
+  // Step 4: support different delimiters specified at the start of the string
+  test("custom delimiter specified at the start should be supported", () => {
+    expect(add("//;\n1;2")).toBe(3);
+    expect(add("//|\n4|5|6")).toBe(15);
+    expect(add("//-\n7-8-9")).toBe(24);
+  });
 });
