@@ -12,10 +12,19 @@ function add(numbers) {
     const delimiterLineEnd = numbers.indexOf("\n");
     delimiter = numbers.substring(2, delimiterLineEnd);
     nums = numbers.substring(delimiterLineEnd + 1);
+    // If delimiter is empty, fallback to default delimiters (comma and newline)
+    if (delimiter === "") {
+      delimiter = /,|\n/;
+    }
   }
 
-  // Replace new lines with delimiter, then split and sum
-  const normalized = nums.replace(/\n/g, delimiter);
+  // Replace new lines with delimiter if delimiter is a string
+  let normalized = nums;
+  if (typeof delimiter === "string") {
+    normalized = nums.replace(/\n/g, delimiter);
+  }
+
+  // Split and sum
   return normalized
     .split(delimiter)
     .map((str) => Number(str))
