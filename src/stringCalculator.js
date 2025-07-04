@@ -1,14 +1,13 @@
 function add(numbers) {
-  // If the input is an empty string, return 0
+  // Return 0 for empty input
   if (numbers === "") {
     return 0;
   }
-  // If the input is a single number, return its integer value
-  if (!numbers.includes(",")) {
-    return parseInt(numbers, 10);
-  }
-  // If the input contains two numbers separated by a comma, sum them
-  const numArray = numbers.split(",").map(Number);
-  return numArray.reduce((sum, num) => sum + num, 0);
+  // Split the input string by comma, convert to numbers, and sum them
+  return numbers
+    .split(",")
+    .map((str) => Number(str))
+    .reduce((sum, num) => sum + num, 0);
 }
+
 module.exports.add = add;
