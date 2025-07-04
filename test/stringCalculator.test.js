@@ -40,4 +40,9 @@ describe("String Calculator", () => {
     expect(add("//|\n4|5|6")).toBe(15);
     expect(add("//-\n7-8-9")).toBe(24);
   });
+
+  // step 4: Edge case for custom delimiter specified at the start
+  test("empty delimiter edge case", () => {
+    expect(add("//\n1,2,3")).toBe(6);
+  });
 });
