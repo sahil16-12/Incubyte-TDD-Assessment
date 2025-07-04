@@ -40,7 +40,7 @@ describe("String Calculator", () => {
     expect(add("//|\n4|5|6")).toBe(15);
     expect(add("//-\n7-8-9")).toBe(24);
     expect(add("//.\n1.2.3")).toBe(6);
-    expect(add("//1\n2112")).toBe(4); 
+    expect(add("//1\n2112")).toBe(4);
     expect(add("// \n3 4 5")).toBe(12);
     expect(add("//sep\n10sep20sep30")).toBe(60);
     expect(add("//\n\n1\n2\n3")).toBe(6);
@@ -49,5 +49,16 @@ describe("String Calculator", () => {
   // step 4: Edge case for custom delimiter specified at the start
   test("empty delimiter edge case", () => {
     expect(add("//\n1,2,3")).toBe(6);
+  });
+
+  // Step 5: negative numbers should throw an exception listing all negatives
+  test("negative numbers throw exception with all negatives listed", () => {
+    expect(() => add("-1,2,3")).toThrow("negative numbers not allowed -1");
+    expect(() => add("1,-2,3,-4")).toThrow(
+      "negative numbers not allowed -2,-4"
+    );
+    expect(() => add("//;\n-5;6;-7")).toThrow(
+      "negative numbers not allowed -5,-7"
+    );
   });
 });
