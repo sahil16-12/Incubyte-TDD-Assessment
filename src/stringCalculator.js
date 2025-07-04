@@ -7,7 +7,7 @@ function extractDelimiterAndNumbers(input) {
     delimiter = input.substring(2, delimiterLineEnd);
     numbers = input.substring(delimiterLineEnd + 1);
     // If delimiter is empty, fallback to default delimiters (comma and newline)
-    if (delimiter === "") {
+    if (!delimiter) {
       delimiter = /,|\n/;
     }
   }
@@ -16,27 +16,24 @@ function extractDelimiterAndNumbers(input) {
 
 // Helper to normalize newlines if delimiter is a string
 function normalizeNumbers(numbers, delimiter) {
-  if (typeof delimiter === "string") {
-    return numbers.replace(/\n/g, delimiter);
-  }
-  return numbers;
+  return typeof delimiter === "string"
+    ? numbers.replace(/\n/g, delimiter)
+    : numbers;
 }
 
 // Helper to split and sum numbers, with negative check
 function sumNumbers(numbersStr, delimiter) {
-  const nums = numbersStr.split(delimiter).map((str) => Number(str));
+  const nums = numbersStr.split(delimiter).map(Number);
   const negatives = nums.filter((num) => num < 0);
-  if (negatives.length > 0) {
+  if (negatives.length) {
+    // Optionally log for debugging: console.log(`Negatives found: ${negatives.join(",")}`);
     throw new Error(`negative numbers not allowed ${negatives.join(",")}`);
   }
   return nums.reduce((sum, num) => sum + num, 0);
 }
 
 function add(input) {
-  // Return 0 for empty input
-  if (!input) {
-    return 0;
-  }
+  if (!input) return 0;
   const { delimiter, numbers } = extractDelimiterAndNumbers(input);
   const normalized = normalizeNumbers(numbers, delimiter);
   return sumNumbers(normalized, delimiter);
