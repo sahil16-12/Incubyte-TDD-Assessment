@@ -3,5 +3,9 @@ function add(numbers) {
   if (numbers === "") {
     return 0;
   }
+  // If the input is a single number, return its integer value
+  if (!numbers.includes(",")) {
+    return parseInt(numbers, 10);
+  }
 }
 module.exports.add = add;
