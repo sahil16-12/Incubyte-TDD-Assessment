@@ -26,4 +26,11 @@ describe("String Calculator", () => {
     expect(add("10,20,30,40")).toBe(100);
     expect(add("5,10,15,20,25")).toBe(75);
   });
+
+  // Test case: input with new lines between numbers should return their sum
+  test("numbers separated by new lines and commas returns their sum", () => {
+    expect(add("1\n2,3")).toBe(6);
+    expect(add("4\n5\n6")).toBe(15);
+    expect(add("7,8\n9")).toBe(24);
+  });
 });
