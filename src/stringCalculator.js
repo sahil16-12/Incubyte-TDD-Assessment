@@ -3,8 +3,9 @@ function add(numbers) {
   if (numbers === "") {
     return 0;
   }
-  // Split the input string by comma, convert to numbers, and sum them
+  // If new lines exist, treat them as commas (delimiters), then split and sum
   return numbers
+    .replace(/\n/g, ",")
     .split(",")
     .map((str) => Number(str))
     .reduce((sum, num) => sum + num, 0);
