@@ -26,10 +26,10 @@ function sumNumbers(numbersStr, delimiter) {
   const nums = numbersStr.split(delimiter).map(Number);
   const negatives = nums.filter((num) => num < 0);
   if (negatives.length) {
-    // Optionally log for debugging: console.log(`Negatives found: ${negatives.join(",")}`);
     throw new Error(`negative numbers not allowed ${negatives.join(",")}`);
   }
-  return nums.reduce((sum, num) => sum + num, 0);
+  // Ignore numbers greater than 1000
+  return nums.filter((num) => num <= 1000).reduce((sum, num) => sum + num, 0);
 }
 
 function add(input) {
