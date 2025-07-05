@@ -136,4 +136,9 @@ describe("String Calculator", () => {
 
     expect(add("//[***]\n1001***2***1002***3")).toBe(5); // Numbers > 1000 with long delimiter
   });
+
+  // Step 8: multiple delimiters in //[delim1][delim2]\n format
+  test("multiple delimiters in //[delim1][delim2] format are supported (step 8)", () => {
+    expect(add("//[*][%]\n1*2%3")).toBe(6); // Both * and % as delimiters
+  });
 });
