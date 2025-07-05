@@ -83,4 +83,9 @@ describe("String Calculator", () => {
     // Negative numbers with no positive numbers
     expect(() => add("-5")).toThrow("negative numbers not allowed -5");
   });
+
+  // Step 6: numbers bigger than 1000 should be ignored
+  test("numbers greater than 1000 are ignored", () => {
+    expect(add("2,1001")).toBe(2);
+  });
 });
