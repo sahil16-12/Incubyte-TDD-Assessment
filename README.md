@@ -37,47 +37,7 @@ npm install
 
 ```bash
 # Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with coverage
-npm run test:coverage
-```
-
----
-
-## 📋 Usage
-
-### Basic Usage
-
-```javascript
-const { add } = require("./src/stringCalculator");
-
-// Basic operations
-console.log(add("")); // 0
-console.log(add("1")); // 1
-console.log(add("1,2")); // 3
-console.log(add("1,2,3,4")); // 10
-```
-
-### Advanced Usage
-
-```javascript
-// Custom delimiters
-console.log(add("//;\n1;2")); // 3
-console.log(add("//[***]\n1***2***3")); // 6
-
-// Multiple delimiters
-console.log(add("//[*][%]\n1*2%3")); // 6
-
-// Error handling
-try {
-  add("1,-2,3");
-} catch (error) {
-  console.log(error.message); // "negative numbers not allowed -2"
-}
+npm run test
 ```
 
 ---
@@ -170,11 +130,10 @@ add("//[***][%%%]\n1***2%%%3***4"); // ➜ 10   (complex multi-char)
 add("//[.][*][+][?]\n1.2*3+4?5"); // ➜ 15   (special regex chars)
 add("//[ ][_]\n1 2_3"); // ➜ 6    (whitespace delimiters)
 add("//[   ][-]\n1   2-3"); // ➜ 6    (multi-space delimiter)
-add("//[1][2]\n311242"); // ➜ 10   (numeric delimiters)
+add("//[1][2]\n311242"); // ➜ 7   (numeric delimiters)
 
 // Fallback cases
 add("//[][;]\n1;2,3"); // ➜ 6    (empty delimiter, fallback)
-add("//[\n][*]\n1*2,3"); // ➜ 6    (newline delimiter, fallback)
 
 // Edge cases
 add("//[x][y]\n1x2x3"); // ➜ 6    (only one delimiter used)
@@ -215,6 +174,8 @@ The implementation follows clean architecture principles with modular, single-re
 // Global constants for reusability
 const DEFAULT_DELIMITER_REGEX = /,|\n/;
 const MULTI_DELIM_PATTERN = /^(\[(.*?)\])+$/;
+const SINGLE_DELIM_PATTERN = /^\[(.*)\]$/;
+const BRACKETED_DELIM_MATCH = /\[(.*?)\]/g;
 
 // Core functions
 function add(input)                    // Main entry point
@@ -230,121 +191,29 @@ function buildMultiDelimiterRegex(delims) // Regex building
 function buildFallbackRegex(validDelims)  // Fallback handling
 ```
 
----
+## 📸 Screenshots
 
-## 🧩 API Reference
+### Test Results
 
-### `add(input: string): number`
+![All Tests Passing](./assets/tests-passing.png)
 
-Calculates the sum of numbers in the input string according to delimiter rules.
+_All 11 test suites passing with comprehensive coverage_
 
-**Parameters:**
+### Code Coverage Report
 
-- `input` (string): The input string containing numbers and delimiters
-
-**Returns:**
-
-- `number`: The sum of valid numbers (≤1000)
-
-**Throws:**
-
-- `Error`: When negative numbers are present, listing all negatives
-
-**Examples:**
-
-```javascript
-add("1,2,3"); // 6
-add("//;\n1;2"); // 3
-add("//[*][%]\n1*2%3"); // 6
-add("1,-2,3"); // throws Error
-```
+![Coverage Report](./assets/test-coverage.png)
 
 ---
 
-## 🔬 Testing Strategy
+## 📚 References
 
-Our test suite covers:
+### TDD Methodology
 
-- **Unit Tests**: Each function tested in isolation
-- **Integration Tests**: End-to-end functionality
-- **Edge Cases**: Boundary conditions and error scenarios
-- **Regression Tests**: Preventing previously fixed bugs
+1. **[The Three Laws of TDD - Uncle Bob](https://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html)**
 
-### Test Categories
+2. **[Fun TDD Introduction With JavaScript - FireShip](https://www.youtube.com/watch?v=Jv2uxzhPFl4)**
 
-1. **Basic Functionality** (Steps 1-2)
-2. **Custom Delimiters** (Steps 3-4)
-3. **Error Handling** (Step 5)
-4. **Number Filtering** (Step 6)
-5. **Multi-Character Delimiters** (Step 7)
-6. **Multiple Delimiters** (Steps 8-9)
-7. **Edge Cases & Regression**
-
----
-
-## 🚦 Requirements Fulfilled
-
-- ✅ **Step 1**: Handle empty string, single number, two numbers, multiple numbers
-- ✅ **Step 2**: Support newlines as delimiters
-- ✅ **Step 3**: Support custom single-character delimiters
-- ✅ **Step 4**: Handle edge cases for custom delimiters
-- ✅ **Step 5**: Throw errors for negative numbers with all negatives listed
-- ✅ **Step 6**: Ignore numbers greater than 1000
-- ✅ **Step 7**: Support any-length custom delimiters in `[delimiter]` format
-- ✅ **Step 8-9**: Support multiple delimiters in `//[delim1][delim2]\n` format
-
----
-
-## 🛠️ Development
-
-### Prerequisites
-
-- Node.js 14+
-- npm 6+
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/string-calculator.git
-cd string-calculator
-
-# Install dependencies
-npm install
-
-# Run tests
-npm test
-```
-
-### Scripts
-
-```bash
-npm test           # Run all tests
-npm run test:watch # Run tests in watch mode
-npm run lint       # Run ESLint
-npm run format     # Format code with Prettier
-```
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Write tests for your changes
-4. Implement your changes
-5. Ensure all tests pass (`npm test`)
-6. Commit your changes (`git commit -m 'Add amazing feature'`)
-7. Push to the branch (`git push origin feature/amazing-feature`)
-8. Open a Pull Request
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
+3. **[An Introduction to Test-Driven Development - FreeCodeCamp](https://www.freecodecamp.org/news/an-introduction-to-test-driven-development-c4de6dce5c/)**
 
 ## 🙏 Acknowledgments
 
@@ -356,22 +225,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-**Author**: [Your Name]  
-**Email**: [your.email@example.com]  
-**LinkedIn**: [your-linkedin-profile]  
-**GitHub**: [@your-username](https://github.com/your-username)
+**Author**: Vora Shahil Irfan  
+**Email**: sahil16december@gmail.com  
+**GitHub**: [@sahil16-12](https://github.com/sahil16-12)
 
 ---
 
-## 📊 Performance
-
-The String Calculator is optimized for performance:
-
-- **Time Complexity**: O(n) where n is the length of the input string
-- **Space Complexity**: O(k) where k is the number of extracted numbers
-- **Regex Optimization**: Efficient delimiter matching with sorted patterns
-- **Memory Efficient**: Minimal object creation and reuse of patterns
-
----
-
-_Made with ❤️ using Test-Driven Development_
+_Thank You Incubyte - Shahil Vora_
