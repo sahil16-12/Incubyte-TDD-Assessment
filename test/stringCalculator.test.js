@@ -137,8 +137,56 @@ describe("String Calculator", () => {
     expect(add("//[***]\n1001***2***1002***3")).toBe(5); // Numbers > 1000 with long delimiter
   });
 
-  // Step 8: multiple delimiters in //[delim1][delim2]\n format
-  test("multiple delimiters in //[delim1][delim2] format are supported (step 8)", () => {
-    expect(add("//[*][%]\n1*2%3")).toBe(6); // Both * and % as delimiters
+  // Step 8,9: multiple delimiters in //[delim1][delim2]...\n format
+  test("multiple delimiters in //[delim1][delim2] format are supported (step 8,9, edge cases)", () => {
+    // Basic multi-delimiter
+    expect(add("//[*][%]\n1*2%3")).toBe(6);
+    expect(add("//[;][,]\n1;2,3")).toBe(6);
+    expect(add("//[***][%]\n1***2%3")).toBe(6);
+    expect(add("//[a][b][c]\n1a2b3c4")).toBe(10);
+
+    // Multi-char delimiters
+    expect(add("//[abc][def]\n1abc2def3")).toBe(6);
+    expect(add("//[***][%%%]\n1***2%%%3***4")).toBe(10);
+
+    // Special regex chars
+    expect(add("//[.][*][+][?]\n1.2*3+4?5")).toBe(15);
+
+    // Whitespace delimiters
+    expect(add("//[ ][_]\n1 2_3")).toBe(6);
+    expect(add("//[   ][-]\n1   2-3")).toBe(6);
+
+    // Delimiter is a number
+    expect(add("//[1][2]\n311242")).toBe(10);
+
+    // Delimiter is empty (should fallback)
+    expect(add("//[][;]\n1;2,3")).toBe(6);
+
+    // Delimiter contains newline (should fallback)
+    expect(add("//[\n][*]\n1*2,3")).toBe(6);
+
+    // Negative numbers with multiple delimiters
+    expect(() => add("//[*][%]\n-1*2%-3")).toThrow(
+      "negative numbers not allowed -1,-3"
+    );
+
+    // Numbers > 1000 with multiple delimiters
+    expect(add("//[*][%]\n1001*2%1002*3")).toBe(5);
+
+    // All numbers > 1000
+    expect(add("//[***][%]\n1001***2000%3000")).toBe(0);
+
+    // Only one delimiter used
+    expect(add("//[x][y]\n1x2x3")).toBe(6);
+
+    // Delimiters with overlapping patterns
+    expect(add("//[***][**][*]\n1***2**3*4")).toBe(10);
+
+    // Delimiters with special regex sequences
+    expect(add("//[|][\\][^][$][(][)]\n1|2\\3^4$5(6)7")).toBe(28);
+
+    // Fallback to default if any delimiter is empty or contains newline
+    expect(add("//[][***]\n1***2,3")).toBe(6);
+    expect(add("//[\n][***]\n1***2,3")).toBe(6);
   });
 });
