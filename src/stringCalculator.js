@@ -1,15 +1,38 @@
+// Helper to escape special regex characters
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Helper to check if fallback to default delimiters is needed
+function isDefaultDelimiter(delim) {
+  return delim === "" || delim.includes("\n");
+}
+
 // Helper to extract delimiter and numbers
 function extractDelimiterAndNumbers(input) {
   if (!input.startsWith("//")) return { delimiter: /,|\n/, numbers: input };
+
   const delimiterLineEnd = input.indexOf("\n");
-  let delimiter = input.substring(2, delimiterLineEnd);
+  const rawDelim = input.substring(2, delimiterLineEnd);
   const numbers = input.substring(delimiterLineEnd + 1);
-  // Support any length delimiter in //[delimiter]\n format, including empty brackets
-  const match = delimiter.match(/^\[(.*)\]$/);
+
+  let delimiter;
+  const match = rawDelim.match(/^\[(.*)\]$/);
   if (match) {
-    delimiter = match[1] || /,|\n/; // fallback to default if empty brackets
+    const inside = match[1];
+    if (isDefaultDelimiter(inside)) {
+      delimiter = /,|\n/;
+    } else {
+      delimiter = escapeRegex(inside);
+    }
+  } else {
+    if (isDefaultDelimiter(rawDelim)) {
+      delimiter = /,|\n/;
+    } else {
+      delimiter = escapeRegex(rawDelim);
+    }
   }
-  if (!delimiter) delimiter = /,|\n/;
+
   return { delimiter, numbers };
 }
 
@@ -22,11 +45,16 @@ function normalizeNumbers(numbers, delimiter) {
 
 // Helper to split and sum numbers, with negative check and ignoring >1000
 function sumNumbers(numbersStr, delimiter) {
-  const nums = numbersStr.split(delimiter).map(Number);
+  const nums =
+    typeof delimiter === "string"
+      ? numbersStr.split(new RegExp(delimiter, "g")).map(Number)
+      : numbersStr.split(delimiter).map(Number);
+
   const negatives = nums.filter((num) => num < 0);
   if (negatives.length) {
     throw new Error(`negative numbers not allowed ${negatives.join(",")}`);
   }
+
   return nums.filter((num) => num <= 1000).reduce((sum, num) => sum + num, 0);
 }
 

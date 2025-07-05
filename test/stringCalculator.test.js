@@ -109,29 +109,31 @@ describe("String Calculator", () => {
   // Step 7: delimiters can be of any length using [delimiter] format
   test("any length custom delimiter in [delimiter] format is supported", () => {
     expect(add("//[***]\n1***2***3")).toBe(6); // Delimiter is '***'
+
     expect(add("//[abc]\n4abc5abc6")).toBe(15); // Delimiter is 'abc'
+
     expect(add("//[--]\n7--8--9")).toBe(24); // Delimiter is '--'
+
     expect(add("//[sep]\n10sep20sep30")).toBe(60); // Delimiter is 'sep'
+
     expect(add("//[***]\n1001***2***3")).toBe(5); // Large number with custom delimiter
-    // Edge: delimiter is a single character in brackets
-    expect(add("//[;]\n1;2;3")).toBe(6);
-    // Edge: delimiter is a special regex character
-    expect(add("//[.]\n1.2.3")).toBe(6);
-    // Edge: delimiter is a number in brackets
-    expect(add("//[1]\n2112")).toBe(4);
-    // Edge: delimiter is a space in brackets
-    expect(add("//[ ]\n3 4 5")).toBe(12);
-    // Edge: delimiter is empty brackets (should fallback to default)
-    expect(add("//[]\n1,2,3")).toBe(6);
-    // Edge: delimiter is a long string of special characters
-    expect(add("//[***!!!***]\n1***!!!***2***!!!***3")).toBe(6);
-    // Edge: delimiter is a newline in brackets (should fallback to default)
-    expect(add("//[\n]\n1,2,3")).toBe(6);
-    // Edge: negative numbers with long delimiter
+
+    expect(add("//[;]\n1;2;3")).toBe(6); // Delimiter is a single character in brackets
+
+    expect(add("//[.]\n1.2.3")).toBe(6); // Delimiter is a special regex character
+
+    expect(add("//[1]\n2112")).toBe(4); // Delimiter is a number in brackets
+
+    expect(add("//[ ]\n3 4 5")).toBe(12); // Delimiter is a space in brackets
+
+    expect(add("//[]\n1,2,3")).toBe(6); // Delimiter is empty brackets (should fallback to default)
+
+    expect(add("//[***!!!***]\n1***!!!***2***!!!***3")).toBe(6); // Delimiter is a long string of special characters
+
     expect(() => add("//[***]\n-1***2***-3")).toThrow(
       "negative numbers not allowed -1,-3"
-    );
-    // Edge: numbers > 1000 with long delimiter
-    expect(add("//[***]\n1001***2***1002***3")).toBe(5);
+    ); // Negative numbers with long delimiter
+
+    expect(add("//[***]\n1001***2***1002***3")).toBe(5); // Numbers > 1000 with long delimiter
   });
 });
