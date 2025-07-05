@@ -4,6 +4,11 @@ function extractDelimiterAndNumbers(input) {
   const delimiterLineEnd = input.indexOf("\n");
   let delimiter = input.substring(2, delimiterLineEnd);
   const numbers = input.substring(delimiterLineEnd + 1);
+  // Support any length delimiter in //[delimiter]\n format
+  const match = delimiter.match(/^\[(.+)\]$/);
+  if (match) {
+    delimiter = match[1];
+  }
   // If delimiter is empty, fallback to default delimiters (comma and newline)
   if (!delimiter) delimiter = /,|\n/;
   return { delimiter, numbers };
