@@ -40,14 +40,14 @@ describe("String Calculator", () => {
     expect(add("//;\n1;2")).toBe(3);
     expect(add("//|\n4|5|6")).toBe(15);
     expect(add("//-\n7-8-9")).toBe(24);
-    // Delimiter is a special character (dot)
-    expect(add("//.\n1.2.3")).toBe(6);
-    // Delimiter is a number ("1" as delimiter)
-    expect(add("//1\n2112")).toBe(4);
-    // Delimiter is a space
-    expect(add("// \n3 4 5")).toBe(12);
-    // Delimiter is a multi-character string
-    expect(add("//sep\n10sep20sep30")).toBe(60);
+
+    expect(add("//.\n1.2.3")).toBe(6); // Delimiter is a special character (dot)
+
+    expect(add("//1\n2112")).toBe(4); // Delimiter is a number ("1" as delimiter)
+
+    expect(add("// \n3 4 5")).toBe(12); // Delimiter is a space
+
+    expect(add("//sep\n10sep20sep30")).toBe(60); // Delimiter is a multi-character string
   });
 
   // step 4: Edge case for custom delimiter specified at the start
@@ -58,35 +58,51 @@ describe("String Calculator", () => {
 
   // Step 5: negative numbers should throw an exception listing all negatives
   test("negative numbers throw exception with all negatives listed", () => {
-    // Only negative numbers
     expect(() => add("-1,-2,-3")).toThrow(
       "negative numbers not allowed -1,-2,-3"
-    );
-    // Negative numbers with custom delimiter
+    ); // Only negative numbers
+
     expect(() => add("//;\n-1;2;-3")).toThrow(
       "negative numbers not allowed -1,-3"
-    );
-    // Negative numbers with empty delimiter (should fallback to comma/newline)
+    ); // Negative numbers with custom delimiter
+
     expect(() => add("//\n-1,2,-3")).toThrow(
       "negative numbers not allowed -1,-3"
-    );
-    // Negative numbers with spaces as delimiter
+    ); // Negative numbers with empty delimiter (should fallback to comma/newline)
+
     expect(() => add("// \n-1 2 -3")).toThrow(
       "negative numbers not allowed -1,-3"
-    );
-    // Negative numbers with multi-character delimiter
+    ); // Negative numbers with spaces as delimiter
+
     expect(() => add("//sep\n-10sep20sep-30")).toThrow(
       "negative numbers not allowed -10,-30"
-    );
-    // Negative numbers with only one negative
-    expect(() => add("1,2,-3")).toThrow("negative numbers not allowed -3");
-    // Negative numbers with no positive numbers
-    expect(() => add("-5")).toThrow("negative numbers not allowed -5");
+    ); // Negative numbers with multi-character delimiter
+
+    expect(() => add("1,2,-3")).toThrow("negative numbers not allowed -3"); // Negative numbers with only one negative
+
+    expect(() => add("-5")).toThrow("negative numbers not allowed -5"); // Negative numbers with no positive numbers
   });
 
   // Step 6: numbers bigger than 1000 should be ignored
   test("numbers greater than 1000 are ignored", () => {
-    expect(add("2,1001")).toBe(2);
-    expect(add("1000,1,2000,3")).toBe(1004);
+    expect(add("2,1001")).toBe(2); // One number above 1000
+
+    expect(add("1000,1,2000,3")).toBe(1004); // Multiple numbers above 1000
+
+    expect(add("1001,2002,3003")).toBe(0); // All numbers above 1000
+
+    expect(add("1000,2")).toBe(1002); // Exactly 1000 should be included
+
+    expect(() => add("-1001,2,1002")).toThrow(
+      "negative numbers not allowed -1001"
+    ); // Negative and large number
+
+    expect(add("//;\n1001;2;1002;3")).toBe(5); // Custom delimiter with large numbers
+
+    expect(add("//sep\n1001sep2000sep3000")).toBe(0); // Custom delimiter, all numbers above 1000
+
+    expect(add("1,1001\n2,2000")).toBe(3); // Mixed delimiters, some numbers above 1000
+
+    expect(add("1001")).toBe(0); // Empty input with large number
   });
 });
