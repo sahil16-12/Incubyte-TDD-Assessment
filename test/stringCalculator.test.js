@@ -105,4 +105,9 @@ describe("String Calculator", () => {
 
     expect(add("1001")).toBe(0); // Empty input with large number
   });
+
+  // Step 7: delimiters can be of any length using [delimiter] format
+  test("any length custom delimiter in [delimiter] format is supported", () => {
+    expect(add("//[***]\n1***2***3")).toBe(6); // Delimiter is '***'
+  });
 });
