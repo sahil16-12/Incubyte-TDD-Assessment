@@ -1,3 +1,9 @@
+// Global regex patterns
+const DEFAULT_DELIMITER_REGEX = /,|\n/;
+const MULTI_DELIM_PATTERN = /^(\[(.*?)\])+$/;
+const SINGLE_DELIM_PATTERN = /^\[(.*)\]$/;
+const BRACKETED_DELIM_MATCH = /\[(.*?)\]/g;
+
 // Helper to escape special regex characters
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -8,9 +14,39 @@ function isDefaultDelimiter(delim) {
   return delim === "" || delim.includes("\n");
 }
 
+// Helper to filter valid custom delimiters
+function getValidDelimiters(delims) {
+  return delims.filter(
+    (d) => !isDefaultDelimiter(d) && d !== undefined && d !== null && d !== ""
+  );
+}
+
+// Helper to build multi-delimiter regex
+function buildMultiDelimiterRegex(delims) {
+  return (
+    "(?:" +
+    delims
+      .sort((a, b) => b.length - a.length)
+      .map(escapeRegex)
+      .join("|") +
+    ")"
+  );
+}
+
+// Helper to build fallback regex 
+function buildFallbackRegex(validDelims) {
+  const delimRegex = [
+    ",",
+    "\\n",
+    ...validDelims.sort((a, b) => b.length - a.length).map(escapeRegex),
+  ].join("|");
+  return "(?:" + delimRegex + ")";
+}
+
 // Helper to extract delimiter and numbers
 function extractDelimiterAndNumbers(input) {
-  if (!input.startsWith("//")) return { delimiter: /,|\n/, numbers: input };
+  if (!input.startsWith("//"))
+    return { delimiter: DEFAULT_DELIMITER_REGEX, numbers: input };
 
   const delimiterLineEnd = input.indexOf("\n");
   const rawDelim = input.substring(2, delimiterLineEnd);
@@ -18,32 +54,33 @@ function extractDelimiterAndNumbers(input) {
 
   let delimiter;
   // Support multiple delimiters in //[delim1][delim2]... format
-  const multiDelimMatch = rawDelim.match(/^(\[(.*?)\])+$/);
+  const multiDelimMatch = rawDelim.match(MULTI_DELIM_PATTERN);
   if (multiDelimMatch) {
     // Extract all delimiters in brackets
-    const allDelims = [...rawDelim.matchAll(/\[(.*?)\]/g)].map((m) => m[1]);
-    // If any delimiter is empty or contains a newline, fallback to default
+    let allDelims = [...rawDelim.matchAll(BRACKETED_DELIM_MATCH)].map(
+      (m) => m[1]
+    );
     if (allDelims.some(isDefaultDelimiter)) {
-      delimiter = /,|\n/;
+      const validDelims = getValidDelimiters(allDelims);
+      delimiter =
+        validDelims.length > 0
+          ? buildFallbackRegex(validDelims)
+          : DEFAULT_DELIMITER_REGEX;
     } else {
-      delimiter = allDelims.map(escapeRegex).join("|");
+      delimiter = buildMultiDelimiterRegex(allDelims);
     }
   } else {
     // Single delimiter (bracketed or not)
-    const match = rawDelim.match(/^\[(.*)\]$/);
+    const match = rawDelim.match(SINGLE_DELIM_PATTERN);
     if (match) {
       const inside = match[1];
-      if (isDefaultDelimiter(inside)) {
-        delimiter = /,|\n/;
-      } else {
-        delimiter = escapeRegex(inside);
-      }
+      delimiter = isDefaultDelimiter(inside)
+        ? DEFAULT_DELIMITER_REGEX
+        : escapeRegex(inside);
     } else {
-      if (isDefaultDelimiter(rawDelim)) {
-        delimiter = /,|\n/;
-      } else {
-        delimiter = escapeRegex(rawDelim);
-      }
+      delimiter = isDefaultDelimiter(rawDelim)
+        ? DEFAULT_DELIMITER_REGEX
+        : escapeRegex(rawDelim);
     }
   }
 
@@ -59,10 +96,11 @@ function normalizeNumbers(numbers, delimiter) {
 
 // Helper to split and sum numbers, with negative check and ignoring >1000
 function sumNumbers(numbersStr, delimiter) {
+  // Always use RegExp for splitting if delimiter is a string (multi-delimiter regex)
   const nums =
-    typeof delimiter === "string"
-      ? numbersStr.split(new RegExp(delimiter, "g")).map(Number)
-      : numbersStr.split(delimiter).map(Number);
+    typeof delimiter === "string" || delimiter instanceof String
+      ? numbersStr.split(new RegExp(delimiter, "g")).filter(Boolean).map(Number)
+      : numbersStr.split(delimiter).filter(Boolean).map(Number);
 
   const negatives = nums.filter((num) => num < 0);
   if (negatives.length) {

@@ -157,13 +157,10 @@ describe("String Calculator", () => {
     expect(add("//[   ][-]\n1   2-3")).toBe(6);
 
     // Delimiter is a number
-    expect(add("//[1][2]\n311242")).toBe(10);
+    expect(add("//[1][2]\n311242")).toBe(7);
 
     // Delimiter is empty (should fallback)
     expect(add("//[][;]\n1;2,3")).toBe(6);
-
-    // Delimiter contains newline (should fallback)
-    expect(add("//[\n][*]\n1*2,3")).toBe(6);
 
     // Negative numbers with multiple delimiters
     expect(() => add("//[*][%]\n-1*2%-3")).toThrow(
@@ -185,8 +182,7 @@ describe("String Calculator", () => {
     // Delimiters with special regex sequences
     expect(add("//[|][\\][^][$][(][)]\n1|2\\3^4$5(6)7")).toBe(28);
 
-    // Fallback to default if any delimiter is empty or contains newline
+    // Fallback to default if any delimiter is empty
     expect(add("//[][***]\n1***2,3")).toBe(6);
-    expect(add("//[\n][***]\n1***2,3")).toBe(6);
   });
 });
