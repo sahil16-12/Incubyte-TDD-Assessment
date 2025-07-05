@@ -17,19 +17,33 @@ function extractDelimiterAndNumbers(input) {
   const numbers = input.substring(delimiterLineEnd + 1);
 
   let delimiter;
-  const match = rawDelim.match(/^\[(.*)\]$/);
-  if (match) {
-    const inside = match[1];
-    if (isDefaultDelimiter(inside)) {
+  // Support multiple delimiters in //[delim1][delim2]... format
+  const multiDelimMatch = rawDelim.match(/^(\[(.*?)\])+$/);
+  if (multiDelimMatch) {
+    // Extract all delimiters in brackets
+    const allDelims = [...rawDelim.matchAll(/\[(.*?)\]/g)].map((m) => m[1]);
+    // If any delimiter is empty or contains a newline, fallback to default
+    if (allDelims.some(isDefaultDelimiter)) {
       delimiter = /,|\n/;
     } else {
-      delimiter = escapeRegex(inside);
+      delimiter = allDelims.map(escapeRegex).join("|");
     }
   } else {
-    if (isDefaultDelimiter(rawDelim)) {
-      delimiter = /,|\n/;
+    // Single delimiter (bracketed or not)
+    const match = rawDelim.match(/^\[(.*)\]$/);
+    if (match) {
+      const inside = match[1];
+      if (isDefaultDelimiter(inside)) {
+        delimiter = /,|\n/;
+      } else {
+        delimiter = escapeRegex(inside);
+      }
     } else {
-      delimiter = escapeRegex(rawDelim);
+      if (isDefaultDelimiter(rawDelim)) {
+        delimiter = /,|\n/;
+      } else {
+        delimiter = escapeRegex(rawDelim);
+      }
     }
   }
 
